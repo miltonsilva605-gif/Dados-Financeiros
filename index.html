@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <style>
+        /* Estilo do Fundo e Layout */
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #f0f2f5; 
+            display: flex; 
+            flex-direction: column; /* Faz os elementos empilharem verticalmente */
+            align-items: center; 
+            padding: 40px 20px; 
+        }
+
+        /* Caixa do Formulário */
+        .container { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 450px; 
+            margin-bottom: 20px; /* Espaço para o botão abaixo */
+        }
+
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; }
+        
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+        }
+
+        button#btnEnviar { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: #1a73e8; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: bold; 
+            transition: 0.3s;
+        }
+
+        button#btnEnviar:hover { background-color: #1557b0; }
+
+        /* Estilo do Botão de Relatório (Fora da Div) */
+        .btn-relatorio {
+            display: block;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            padding: 12px 0;
+            background-color: #ffffff;
+            color: #1a73e8;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 2px solid #1a73e8;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .btn-relatorio:hover {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        #status { margin-top: 15px; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Nova Movimentação</h2>
+    <form id="formFinanceiro">
+        <div class="form-group">
+            <label>Descrição</label>
+            <input type="text" name="descricao" placeholder="Ex: Salário, Supermercado..." required>
+        </div>
+
+        <div class="form-group">
+            <label>Valor (R$)</label>
+            <input type="text" name="valor" placeholder="0,00" inputmode="decimal" required>
+        </div>
+
+        <div class="form-group">
+            <label>Tipo de Movimentação</label>
+            <select name="tipo" required>
+                <option value="" disabled selected>Selecione o tipo</option>
+                <option value="Entrada">Entrada</option>
+                <option value="Saída">Saída</option>
+                <option value="Investimento">Investimento</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Forma de Pagamento</label>
+            <select name="pagamento" required>
+                <option value="PIX">PIX</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Cartão de Débito">Cartão de Débito</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Outro">Outro</option>
+            </select>
+        </div>
+
+        <button type="submit" id="btnEnviar">Salvar na Planilha</button>
+        <div id="status"></div>
+    </form>
+</div>
+
+<a href="https://lookerstudio.google.com/reporting/9cdf9592-8060-42d2-be98-f98cb01400cf" target="_blank" class="btn-relatorio">📊 Abrir Relatório / Planilha</a>
+    
+<script>
+    // COLE SUA URL DO GOOGLE APPS SCRIPT ABAIXO
+    const urlScript = 'https://script.google.com/macros/s/AKfycbxtxWYkXozJXLA5yokwUFXplHmHiE55gDYxrXFtDQGKyW_mtkIgQa8Q9IBo768SeqrY/exec';
+    
+    const form = document.getElementById('formFinanceiro');
+    const status = document.getElementById('status');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        status.style.display = 'block';
+        status.innerText = 'Enviando...';
+        status.style.color = '#666';
+
+        fetch(urlScript, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: new FormData(form)
+        })
+        .then(() => {
+            status.innerText = '✅ Registrado com sucesso!';
+            status.style.color = 'green';
+            form.reset();
+        })
+        .catch(error => {
+            status.innerText = '❌ Erro na conexão.';
+            status.style.color = 'red';
+        });
+    });
+</script>
+</body>
+</html>
